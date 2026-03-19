@@ -12,16 +12,19 @@ const DEFAULT_HEIGHT = 150;
 const DEFAULT_COLOR = "#fef08a";
 
 function App() {
-  const { stickers, viewport, addSticker, setViewport } = useBoard();
+  const { stickers, viewport, addSticker, setViewport, updateSticker } =
+    useBoard();
   const canvasRef = useRef<HTMLDivElement>(null);
   const [selectedStickerId, setSelectedStickerId] = useState<string | null>(
     null,
   );
+  const [editingStickerId, setEditingStickerId] = useState<string | null>(null);
   const { handlePanMouseDown } = usePan({ viewport, setViewport });
 
   useZoom(canvasRef, viewport, setViewport);
 
   const handleCanvasClick = useCallback(() => {
+    setEditingStickerId(null);
     setSelectedStickerId(null);
   }, []);
 
@@ -50,13 +53,6 @@ function App() {
     [viewport.x, viewport.y, viewport.zoom, stickers, addSticker],
   );
 
-  const handleStickerDoubleClick = useCallback(
-    (e: MouseEvent<HTMLDivElement>) => {
-      e.stopPropagation();
-    },
-    [],
-  );
-
   return (
     <Canvas
       ref={canvasRef}
@@ -70,11 +66,20 @@ function App() {
           key={sticker.id}
           sticker={sticker}
           isSelected={sticker.id === selectedStickerId}
+          isEditing={sticker.id === editingStickerId}
           onClick={(e) => {
             e.stopPropagation();
             setSelectedStickerId(sticker.id);
           }}
-          onDoubleClick={handleStickerDoubleClick}
+          onDoubleClick={(e) => {
+            e.stopPropagation();
+            setSelectedStickerId(sticker.id);
+            setEditingStickerId(sticker.id);
+          }}
+          onContentChange={(content) => {
+            updateSticker(sticker.id, { content });
+            setEditingStickerId(null);
+          }}
         />
       ))}
     </Canvas>

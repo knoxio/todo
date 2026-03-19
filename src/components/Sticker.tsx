@@ -1,4 +1,9 @@
-import type { MouseEvent } from "react";
+import {
+  useCallback,
+  useRef,
+  type KeyboardEvent,
+  type MouseEvent,
+} from "react";
 import type { Sticker as StickerType } from "../types";
 
 interface StickerProps {
@@ -14,13 +19,13 @@ interface StickerProps {
   onDoubleClick?: (e: MouseEvent<HTMLDivElement>) => void;
   /** Fired on mouse down. */
   onMouseDown?: (e: MouseEvent<HTMLDivElement>) => void;
+  /** Called when content changes after editing exits. */
+  onContentChange?: (content: string) => void;
 }
 
 /**
  * Renders a single sticker as an absolutely-positioned div.
- *
- * This is a read-only presentation component — it forwards mouse events
- * via callback props but implements no behavior of its own.
+ * When isEditing is true, displays a textarea for inline editing.
  */
 function Sticker({
   sticker,
@@ -29,10 +34,37 @@ function Sticker({
   onClick,
   onDoubleClick,
   onMouseDown,
+  onContentChange,
 }: StickerProps) {
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+
+  const handleTextareaRef = useCallback((node: HTMLTextAreaElement | null) => {
+    textareaRef.current = node;
+    if (node) {
+      node.focus();
+      node.setSelectionRange(node.value.length, node.value.length);
+    }
+  }, []);
+
+  const commitEdit = useCallback(() => {
+    if (textareaRef.current) {
+      onContentChange?.(textareaRef.current.value);
+    }
+  }, [onContentChange]);
+
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent<HTMLTextAreaElement>) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        commitEdit();
+      }
+    },
+    [commitEdit],
+  );
+
   return (
     <div
-      className={`absolute overflow-hidden rounded-lg p-3 shadow-md select-none ${isSelected && !isEditing ? "ring-2 ring-blue-500" : ""}`}
+      className={`absolute overflow-hidden rounded-lg p-3 shadow-md ${isEditing ? "" : "select-none"} ${isSelected && !isEditing ? "ring-2 ring-blue-500" : ""}`}
       style={{
         left: sticker.x,
         top: sticker.y,
@@ -45,9 +77,19 @@ function Sticker({
       onDoubleClick={onDoubleClick}
       onMouseDown={onMouseDown}
     >
-      <p className="whitespace-pre-wrap break-words text-sm text-gray-800">
-        {sticker.content}
-      </p>
+      {isEditing ? (
+        <textarea
+          ref={handleTextareaRef}
+          className="h-full w-full resize-none border-none bg-transparent text-sm text-gray-800 outline-none"
+          defaultValue={sticker.content}
+          onBlur={commitEdit}
+          onKeyDown={handleKeyDown}
+        />
+      ) : (
+        <p className="whitespace-pre-wrap break-words text-sm text-gray-800">
+          {sticker.content}
+        </p>
+      )}
     </div>
   );
 }
