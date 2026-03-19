@@ -5,6 +5,8 @@ interface CanvasProps {
   children?: ReactNode;
   /** Fired when clicking on the canvas background (not a child element). */
   onClick?: (e: MouseEvent<HTMLDivElement>) => void;
+  /** Fired on double-click on the canvas. */
+  onDoubleClick?: (e: MouseEvent<HTMLDivElement>) => void;
 }
 
 /**
@@ -13,7 +15,7 @@ interface CanvasProps {
  * transformed container so they move/scale with the viewport.
  */
 const Canvas = forwardRef<HTMLDivElement, CanvasProps>(function Canvas(
-  { viewport, children, onClick },
+  { viewport, children, onClick, onDoubleClick },
   ref,
 ) {
   const { x, y, zoom } = viewport;
@@ -30,6 +32,7 @@ const Canvas = forwardRef<HTMLDivElement, CanvasProps>(function Canvas(
       ref={ref}
       className="fixed inset-0 h-screen w-screen overflow-hidden bg-gray-50"
       onClick={onClick}
+      onDoubleClick={onDoubleClick}
       style={{
         backgroundImage: `radial-gradient(circle, #d1d5db ${dotSize}px, transparent ${dotSize}px)`,
         backgroundSize: `${scaledSpacing}px ${scaledSpacing}px`,
