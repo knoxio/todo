@@ -23,6 +23,10 @@ interface StickerProps {
   onContentChange?: (content: string) => void;
   /** Called when the delete button is clicked. */
   onDelete?: () => void;
+  /** Called to bring this sticker to front. */
+  onBringToFront?: () => void;
+  /** Called to send this sticker to back. */
+  onSendToBack?: () => void;
   /** Fired on mouse down on the resize handle. */
   onResizeMouseDown?: (e: MouseEvent<HTMLDivElement>) => void;
 }
@@ -40,6 +44,8 @@ function Sticker({
   onMouseDown,
   onContentChange,
   onDelete,
+  onBringToFront,
+  onSendToBack,
   onResizeMouseDown,
 }: StickerProps) {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
@@ -83,18 +89,48 @@ function Sticker({
       onDoubleClick={onDoubleClick}
       onMouseDown={onMouseDown}
     >
-      {isSelected && !isEditing && onDelete && (
-        <button
-          type="button"
-          className="absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-gray-700 text-xs text-white opacity-60 hover:opacity-100"
-          onClick={(e) => {
-            e.stopPropagation();
-            onDelete();
-          }}
-          aria-label="Delete sticker"
-        >
-          &times;
-        </button>
+      {isSelected && !isEditing && (
+        <div className="absolute right-1 top-1 flex gap-0.5">
+          {onBringToFront && (
+            <button
+              type="button"
+              className="flex h-5 w-5 items-center justify-center rounded-full bg-gray-700 text-xs text-white opacity-60 hover:opacity-100"
+              onClick={(e) => {
+                e.stopPropagation();
+                onBringToFront();
+              }}
+              aria-label="Bring to front"
+            >
+              &#x25B2;
+            </button>
+          )}
+          {onSendToBack && (
+            <button
+              type="button"
+              className="flex h-5 w-5 items-center justify-center rounded-full bg-gray-700 text-xs text-white opacity-60 hover:opacity-100"
+              onClick={(e) => {
+                e.stopPropagation();
+                onSendToBack();
+              }}
+              aria-label="Send to back"
+            >
+              &#x25BC;
+            </button>
+          )}
+          {onDelete && (
+            <button
+              type="button"
+              className="flex h-5 w-5 items-center justify-center rounded-full bg-gray-700 text-xs text-white opacity-60 hover:opacity-100"
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete();
+              }}
+              aria-label="Delete sticker"
+            >
+              &times;
+            </button>
+          )}
+        </div>
       )}
       {isEditing ? (
         <textarea
