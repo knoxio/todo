@@ -2,6 +2,7 @@ import { useCallback, useRef, useState } from "react";
 import Canvas from "./components/Canvas";
 import Sticker from "./components/Sticker";
 import { useBoard } from "./hooks/useBoard";
+import { usePan } from "./hooks/usePan";
 import { useZoom } from "./hooks/useZoom";
 
 function App() {
@@ -11,6 +12,7 @@ function App() {
     null,
   );
 
+  const { handlePanMouseDown } = usePan({ viewport, setViewport });
   useZoom(canvasRef, viewport, setViewport);
 
   const handleCanvasClick = useCallback(() => {
@@ -18,7 +20,12 @@ function App() {
   }, []);
 
   return (
-    <Canvas ref={canvasRef} viewport={viewport} onClick={handleCanvasClick}>
+    <Canvas
+      ref={canvasRef}
+      viewport={viewport}
+      onClick={handleCanvasClick}
+      onMouseDown={handlePanMouseDown}
+    >
       {stickers.map((sticker) => (
         <Sticker
           key={sticker.id}
