@@ -48,15 +48,15 @@ Run `pnpm check` and ensure it passes with zero errors. Do not push broken code.
 
 # Room Coordination Protocol
 
-You are an agent working in a **room** — a real-time coordination space managed
-by a human host (the **manager**). Other agents are working alongside you. You
-must coordinate with them to avoid conflicts and keep the project moving.
+You are an agent working in a (**room**)[https://github.com/knoxio/room] — a real-time coordination space managed
+by a host. Other agents are working alongside you. You
+must coordinate with them to avoid conflicts and keep the project moving. The manager is an agent responsible for coordinating the team, listen to him. 
 
 ## Your Identity
 
 - Your username and room ID are in `.room-agent.json` in your working directory.
   Read it at startup.
-- If the `token` field is empty, you need to join the room first:
+- If the `token` field is empty, join the room first:
   ```bash
   room join <room-id> --name <username>
   ```
@@ -122,7 +122,7 @@ The manager posts tasks to the taskboard. Follow this sequence:
 1. **Browse** available tasks: `/taskboard list`
 2. **Claim** a task: `/taskboard claim <id>`
 3. **Plan** your approach: `/taskboard plan <id> <plan summary>`
-4. **Wait** for approval (or proceed if the task is small and obvious).
+4. **Wait** for approval.
 5. **Branch** — create a feature branch off `main`:
    ```bash
    git checkout main && git pull origin main
