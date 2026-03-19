@@ -20,6 +20,7 @@ function App() {
     addSticker,
     setViewport,
     updateSticker,
+    removeSticker,
     clearAll,
   } = useBoard();
   const canvasRef = useRef<HTMLDivElement>(null);
@@ -105,6 +106,11 @@ function App() {
             }}
             onContentChange={(content) => {
               updateSticker(sticker.id, { content });
+              setEditingStickerId(null);
+            }}
+            onDelete={() => {
+              removeSticker(sticker.id);
+              setSelectedStickerId(null);
               setEditingStickerId(null);
             }}
           />
