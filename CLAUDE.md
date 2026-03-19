@@ -54,9 +54,14 @@ must coordinate with them to avoid conflicts and keep the project moving.
 
 ## Your Identity
 
-- Your username, token, and room ID are in `.room-agent.json` in your working
-  directory. Read it at startup.
-- **Never run `room join`** — your token is already provisioned.
+- Your username and room ID are in `.room-agent.json` in your working directory.
+  Read it at startup.
+- If the `token` field is empty, you need to join the room first:
+  ```bash
+  room join <room-id> --name <username>
+  ```
+  Save the token you receive back into `.room-agent.json` so you don't have to
+  rejoin next time.
 - **Never change your username** — it is assigned and fixed.
 
 ## Communication — Room Commands
@@ -118,12 +123,57 @@ The manager posts tasks to the taskboard. Follow this sequence:
 2. **Claim** a task: `/taskboard claim <id>`
 3. **Plan** your approach: `/taskboard plan <id> <plan summary>`
 4. **Wait** for approval (or proceed if the task is small and obvious).
-5. **Read** all target files before writing any code.
-6. **Implement** — announce when starting, update `/set_status` at milestones.
-7. **Test** — run `pnpm check` before committing. Fix all errors.
-8. **Announce** completion in the room with a summary of changes and files
-   modified.
-9. **Finish** the task: `/taskboard finish <id>`
+5. **Branch** — create a feature branch off `main`:
+   ```bash
+   git checkout main && git pull origin main
+   git checkout -b <username>/<task-id>-short-description
+   ```
+   Example: `erica/us-5-create-sticker`
+6. **Read** all target files before writing any code.
+7. **Implement** — announce when starting, update `/set_status` at milestones.
+8. **Test** — run `pnpm check` before committing. Fix all errors. Do NOT push
+   broken code.
+9. **Commit** — write clear commit messages. Do not reference AI tooling or
+   agent names in commits.
+10. **Push** — announce in the room before pushing:
+    ```bash
+    git push -u origin <branch-name>
+    ```
+11. **PR** — open a pull request against `main`:
+    ```bash
+    gh pr create --title "US-<id>: short description" --body "..."
+    ```
+    Include in the PR body:
+    - Summary of what changed and why
+    - Which user story it implements
+    - Files added/modified
+    - How to test it
+12. **Review** — put the task in review: `/taskboard update <id> status=review`
+    and announce in the room that your PR is ready for review.
+13. **Address feedback** — if the manager or another agent leaves review
+    comments, fix them, push, and announce the update.
+14. **Finish** — after the PR is approved and merged, mark the task done:
+    `/taskboard finish <id>`
+
+## Branch Naming
+
+Use the pattern: `<username>/<task-id>-short-kebab-description`
+
+Examples:
+- `monica/us-1-board-state-hook`
+- `rita/us-7-canvas-pan`
+- `sandra/us-12-color-picker`
+
+## Git Rules
+
+- **Always branch from `main`.** Pull latest before branching.
+- **Never push directly to `main`.** Always go through a PR.
+- **Run `pnpm check` before every push.** Zero errors required.
+- **Do not reference AI, agents, or tooling** in commits, PR titles, or PR
+  descriptions.
+- **Announce in the room before every push** so other agents know to expect
+  changes.
+- **Keep PRs focused.** One user story per PR. Don't bundle unrelated changes.
 
 ## Coordination Rules
 
