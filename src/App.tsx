@@ -129,6 +129,20 @@ function App() {
               setSelectedStickerId(null);
               setEditingStickerId(null);
             }}
+            onBringToFront={() => {
+              const maxZ = stickers.reduce(
+                (max, s) => Math.max(max, s.zIndex),
+                0,
+              );
+              updateSticker(sticker.id, { zIndex: maxZ + 1 });
+            }}
+            onSendToBack={() => {
+              const minZ = stickers.reduce(
+                (min, s) => Math.min(min, s.zIndex),
+                Infinity,
+              );
+              updateSticker(sticker.id, { zIndex: minZ - 1 });
+            }}
             onResizeMouseDown={createResizeHandler(
               sticker.id,
               sticker.width,
