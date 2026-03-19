@@ -1,5 +1,6 @@
 import type { MouseEvent } from "react";
 import { useCallback, useRef, useState } from "react";
+import type { BoardState } from "./types";
 import Canvas from "./components/Canvas";
 import Sticker from "./components/Sticker";
 import Toolbar from "./components/Toolbar";
@@ -23,6 +24,8 @@ function App() {
     updateSticker,
     removeSticker,
     clearAll,
+    getBoard,
+    setBoard,
   } = useBoard();
   const canvasRef = useRef<HTMLDivElement>(null);
   const [selectedStickerId, setSelectedStickerId] = useState<string | null>(
@@ -90,6 +93,33 @@ function App() {
     [viewport.x, viewport.y, viewport.zoom, stickers, addSticker],
   );
 
+  const handleExport = useCallback(() => {
+    const board = getBoard();
+    const json = JSON.stringify(board, null, 2);
+    const blob = new Blob([json], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "stickyboard.json";
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [getBoard]);
+
+  const handleImport = useCallback(
+    (json: string) => {
+      try {
+        const board: BoardState = JSON.parse(json);
+        if (!Array.isArray(board.stickers) || !board.viewport) return;
+        setBoard(board);
+        setSelectedStickerId(null);
+        setEditingStickerId(null);
+      } catch {
+        // Invalid JSON — silently ignore
+      }
+    },
+    [setBoard],
+  );
+
   return (
     <>
       <Canvas
@@ -137,7 +167,11 @@ function App() {
           />
         ))}
       </Canvas>
-      <Toolbar onClear={clearAll} />
+      <Toolbar
+        onClear={clearAll}
+        onExport={handleExport}
+        onImport={handleImport}
+      />
     </>
   );
 }
