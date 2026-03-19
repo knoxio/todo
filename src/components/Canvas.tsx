@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { forwardRef, type ReactNode } from "react";
 
 interface CanvasProps {
   viewport: { x: number; y: number; zoom: number };
@@ -10,7 +10,10 @@ interface CanvasProps {
  * to viewport pan (x, y) and zoom. Children are rendered inside a
  * transformed container so they move/scale with the viewport.
  */
-function Canvas({ viewport, children }: CanvasProps) {
+const Canvas = forwardRef<HTMLDivElement, CanvasProps>(function Canvas(
+  { viewport, children },
+  ref,
+) {
   const { x, y, zoom } = viewport;
 
   const dotSize = 1;
@@ -22,6 +25,7 @@ function Canvas({ viewport, children }: CanvasProps) {
 
   return (
     <div
+      ref={ref}
       className="fixed inset-0 h-screen w-screen overflow-hidden bg-gray-50"
       style={{
         backgroundImage: `radial-gradient(circle, #d1d5db ${dotSize}px, transparent ${dotSize}px)`,
@@ -39,6 +43,6 @@ function Canvas({ viewport, children }: CanvasProps) {
       </div>
     </div>
   );
-}
+});
 
 export default Canvas;
