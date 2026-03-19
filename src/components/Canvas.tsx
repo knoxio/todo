@@ -7,6 +7,8 @@ interface CanvasProps {
   onClick?: (e: MouseEvent<HTMLDivElement>) => void;
   /** Fired on double-click on the canvas. */
   onDoubleClick?: (e: MouseEvent<HTMLDivElement>) => void;
+  /** Forwarded to the outer container for pan/interaction handling. */
+  onMouseDown?: (e: MouseEvent<HTMLDivElement>) => void;
 }
 
 /**
@@ -15,7 +17,7 @@ interface CanvasProps {
  * transformed container so they move/scale with the viewport.
  */
 const Canvas = forwardRef<HTMLDivElement, CanvasProps>(function Canvas(
-  { viewport, children, onClick, onDoubleClick },
+  { viewport, children, onClick, onDoubleClick, onMouseDown },
   ref,
 ) {
   const { x, y, zoom } = viewport;
@@ -30,9 +32,10 @@ const Canvas = forwardRef<HTMLDivElement, CanvasProps>(function Canvas(
   return (
     <div
       ref={ref}
-      className="fixed inset-0 h-screen w-screen overflow-hidden bg-gray-50"
+      className="fixed inset-0 h-screen w-screen cursor-grab overflow-hidden bg-gray-50"
       onClick={onClick}
       onDoubleClick={onDoubleClick}
+      onMouseDown={onMouseDown}
       style={{
         backgroundImage: `radial-gradient(circle, #d1d5db ${dotSize}px, transparent ${dotSize}px)`,
         backgroundSize: `${scaledSpacing}px ${scaledSpacing}px`,

@@ -4,6 +4,7 @@ import Canvas from "./components/Canvas";
 import Sticker from "./components/Sticker";
 import type { Sticker as StickerType } from "./types";
 import { useBoard } from "./hooks/useBoard";
+import { usePan } from "./hooks/usePan";
 import { useZoom } from "./hooks/useZoom";
 
 const DEFAULT_WIDTH = 200;
@@ -16,6 +17,7 @@ function App() {
   const [selectedStickerId, setSelectedStickerId] = useState<string | null>(
     null,
   );
+  const { handlePanMouseDown } = usePan({ viewport, setViewport });
 
   useZoom(canvasRef, viewport, setViewport);
 
@@ -61,6 +63,7 @@ function App() {
       viewport={viewport}
       onClick={handleCanvasClick}
       onDoubleClick={handleCanvasDoubleClick}
+      onMouseDown={handlePanMouseDown}
     >
       {stickers.map((sticker) => (
         <Sticker
