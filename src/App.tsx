@@ -1,8 +1,16 @@
+import Canvas from "./components/Canvas";
+import Sticker from "./components/Sticker";
+import { useBoard } from "./hooks/useBoard";
+
 function App() {
+  const { stickers, viewport } = useBoard();
+
   return (
-    <div className="flex h-screen items-center justify-center bg-gray-100">
-      <h1 className="text-3xl font-bold text-gray-800">Stickyboard</h1>
-    </div>
+    <Canvas viewport={viewport}>
+      {stickers.map((sticker) => (
+        <Sticker key={sticker.id} sticker={sticker} />
+      ))}
+    </Canvas>
   );
 }
 
