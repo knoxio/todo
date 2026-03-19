@@ -5,6 +5,7 @@ import Sticker from "./components/Sticker";
 import Toolbar from "./components/Toolbar";
 import type { Sticker as StickerType } from "./types";
 import { useBoard } from "./hooks/useBoard";
+import { useDrag } from "./hooks/useDrag";
 import { usePan } from "./hooks/usePan";
 import { useZoom } from "./hooks/useZoom";
 
@@ -27,6 +28,18 @@ function App() {
   );
   const [editingStickerId, setEditingStickerId] = useState<string | null>(null);
   const { handlePanMouseDown } = usePan({ viewport, setViewport });
+
+  const handleStickerDrag = useCallback(
+    (id: string, x: number, y: number) => {
+      updateSticker(id, { x, y });
+    },
+    [updateSticker],
+  );
+
+  const { createDragHandler } = useDrag({
+    zoom: viewport.zoom,
+    onDrag: handleStickerDrag,
+  });
 
   useZoom(canvasRef, viewport, setViewport);
 
@@ -83,6 +96,12 @@ function App() {
               e.stopPropagation();
               setSelectedStickerId(sticker.id);
               setEditingStickerId(sticker.id);
+            }}
+            onMouseDown={(e) => {
+              if (editingStickerId !== sticker.id) {
+                setSelectedStickerId(sticker.id);
+                createDragHandler(sticker.id, sticker.x, sticker.y)(e);
+              }
             }}
             onContentChange={(content) => {
               updateSticker(sticker.id, { content });
