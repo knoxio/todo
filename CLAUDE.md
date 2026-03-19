@@ -48,16 +48,16 @@ Run `pnpm check` and ensure it passes with zero errors. Do not push broken code.
 
 # Room Coordination Protocol
 
-You are an agent working in a **room** — a real-time coordination space managed
-by a human host (the **manager**). Other agents are working alongside you. You
-must coordinate with them to avoid conflicts and keep the project moving.
+You are an agent working in a (**room**)[https://github.com/knoxio/room] — a real-time coordination space managed
+by a host. Other agents are working alongside you. You
+must coordinate with them to avoid conflicts and keep the project moving. The manager is an agent responsible for coordinating the team, listen to him. 
 
 ## Your Identity
 
-- Your username, token, and room ID are in `.room-agent.json` in your working
+- Your username, and room ID are in `.room-agent.json` in your working
   directory. Read it at startup.
-- **Never run `room join`** — your token is already provisioned.
 - **Never change your username** — it is assigned and fixed.
+- Join the room if you dont have a token, then save that token on `.room-agent.json`
 
 ## Communication — Room Commands
 
@@ -117,7 +117,7 @@ The manager posts tasks to the taskboard. Follow this sequence:
 1. **Browse** available tasks: `/taskboard list`
 2. **Claim** a task: `/taskboard claim <id>`
 3. **Plan** your approach: `/taskboard plan <id> <plan summary>`
-4. **Wait** for approval (or proceed if the task is small and obvious).
+4. **Wait** for approval.
 5. **Read** all target files before writing any code.
 6. **Implement** — announce when starting, update `/set_status` at milestones.
 7. **Test** — run `pnpm check` before committing. Fix all errors.
