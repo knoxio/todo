@@ -1,8 +1,10 @@
-import { forwardRef, type ReactNode } from "react";
+import { forwardRef, type MouseEvent, type ReactNode } from "react";
 
 interface CanvasProps {
   viewport: { x: number; y: number; zoom: number };
   children?: ReactNode;
+  /** Forwarded to the outer container for pan/interaction handling. */
+  onMouseDown?: (e: MouseEvent<HTMLDivElement>) => void;
 }
 
 /**
@@ -11,7 +13,7 @@ interface CanvasProps {
  * transformed container so they move/scale with the viewport.
  */
 const Canvas = forwardRef<HTMLDivElement, CanvasProps>(function Canvas(
-  { viewport, children },
+  { viewport, children, onMouseDown },
   ref,
 ) {
   const { x, y, zoom } = viewport;
@@ -26,12 +28,13 @@ const Canvas = forwardRef<HTMLDivElement, CanvasProps>(function Canvas(
   return (
     <div
       ref={ref}
-      className="fixed inset-0 h-screen w-screen overflow-hidden bg-gray-50"
+      className="fixed inset-0 h-screen w-screen cursor-grab overflow-hidden bg-gray-50"
       style={{
         backgroundImage: `radial-gradient(circle, #d1d5db ${dotSize}px, transparent ${dotSize}px)`,
         backgroundSize: `${scaledSpacing}px ${scaledSpacing}px`,
         backgroundPosition: `${bgPosX}px ${bgPosY}px`,
       }}
+      onMouseDown={onMouseDown}
     >
       <div
         style={{
