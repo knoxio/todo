@@ -124,6 +124,9 @@ function App() {
               updateSticker(sticker.id, { content });
               setEditingStickerId(null);
             }}
+            onColorChange={(color) => {
+              updateSticker(sticker.id, { color });
+            }}
             onDelete={() => {
               removeSticker(sticker.id);
               setSelectedStickerId(null);

@@ -6,6 +6,15 @@ import {
 } from "react";
 import type { Sticker as StickerType } from "../types";
 
+const SWATCH_COLORS = [
+  "#fef08a",
+  "#fed7aa",
+  "#fecaca",
+  "#d9f99d",
+  "#a5f3fc",
+  "#c4b5fd",
+];
+
 interface StickerProps {
   /** The sticker data to render. */
   sticker: StickerType;
@@ -29,6 +38,8 @@ interface StickerProps {
   onSendToBack?: () => void;
   /** Fired on mouse down on the resize handle. */
   onResizeMouseDown?: (e: MouseEvent<HTMLDivElement>) => void;
+  /** Called when a color swatch is clicked. */
+  onColorChange?: (color: string) => void;
 }
 
 /**
@@ -47,6 +58,7 @@ function Sticker({
   onBringToFront,
   onSendToBack,
   onResizeMouseDown,
+  onColorChange,
 }: StickerProps) {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
@@ -130,6 +142,23 @@ function Sticker({
               &times;
             </button>
           )}
+        </div>
+      )}
+      {isSelected && !isEditing && onColorChange && (
+        <div className="absolute bottom-1 left-1 flex gap-1">
+          {SWATCH_COLORS.map((color) => (
+            <button
+              key={color}
+              type="button"
+              className={`h-5 w-5 rounded-full border-2 ${color === sticker.color ? "border-gray-700" : "border-white"} shadow-sm`}
+              style={{ backgroundColor: color }}
+              onClick={(e) => {
+                e.stopPropagation();
+                onColorChange(color);
+              }}
+              aria-label={`Change color to ${color}`}
+            />
+          ))}
         </div>
       )}
       {isEditing ? (
