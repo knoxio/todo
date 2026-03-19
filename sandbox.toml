@@ -1,0 +1,34 @@
+[project]
+repo = "https://github.com/knoxio/todo.git"
+container_name = "sandbox-todo"
+
+[[agent]]
+name = "r2d2"
+role = "coder"
+
+[[agent]]
+name = "bumblebee"
+role = "coder"
+
+[[agent]]
+name = "qa"
+role = "reviewer"
+
+[[agent]]
+name = "ba"
+role = "manager"
+
+[room]
+default = "dev"
+
+[auth]
+method = "gh-cli"
+mount_ssh = false
+gh_account = "knoxio"
+
+[environment]
+languages = ["node"]
+utilities = [
+    "glow",
+    "playwright",
+]
