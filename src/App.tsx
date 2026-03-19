@@ -7,6 +7,7 @@ import type { Sticker as StickerType } from "./types";
 import { useBoard } from "./hooks/useBoard";
 import { useDrag } from "./hooks/useDrag";
 import { usePan } from "./hooks/usePan";
+import { useResize } from "./hooks/useResize";
 import { useZoom } from "./hooks/useZoom";
 
 const DEFAULT_WIDTH = 200;
@@ -40,6 +41,18 @@ function App() {
   const { createDragHandler } = useDrag({
     zoom: viewport.zoom,
     onDrag: handleStickerDrag,
+  });
+
+  const handleStickerResize = useCallback(
+    (id: string, width: number, height: number) => {
+      updateSticker(id, { width, height });
+    },
+    [updateSticker],
+  );
+
+  const { createResizeHandler } = useResize({
+    zoom: viewport.zoom,
+    onResize: handleStickerResize,
   });
 
   useZoom(canvasRef, viewport, setViewport);
@@ -113,6 +126,11 @@ function App() {
               setSelectedStickerId(null);
               setEditingStickerId(null);
             }}
+            onResizeMouseDown={createResizeHandler(
+              sticker.id,
+              sticker.width,
+              sticker.height,
+            )}
           />
         ))}
       </Canvas>

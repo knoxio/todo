@@ -23,6 +23,8 @@ interface StickerProps {
   onContentChange?: (content: string) => void;
   /** Called when the delete button is clicked. */
   onDelete?: () => void;
+  /** Fired on mouse down on the resize handle. */
+  onResizeMouseDown?: (e: MouseEvent<HTMLDivElement>) => void;
 }
 
 /**
@@ -38,6 +40,7 @@ function Sticker({
   onMouseDown,
   onContentChange,
   onDelete,
+  onResizeMouseDown,
 }: StickerProps) {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
@@ -105,6 +108,12 @@ function Sticker({
         <p className="whitespace-pre-wrap break-words text-sm text-gray-800">
           {sticker.content}
         </p>
+      )}
+      {isSelected && !isEditing && onResizeMouseDown && (
+        <div
+          className="absolute bottom-0 right-0 h-3 w-3 cursor-nwse-resize"
+          onMouseDown={onResizeMouseDown}
+        />
       )}
     </div>
   );
