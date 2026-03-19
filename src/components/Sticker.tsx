@@ -21,6 +21,8 @@ interface StickerProps {
   onMouseDown?: (e: MouseEvent<HTMLDivElement>) => void;
   /** Called when content changes after editing exits. */
   onContentChange?: (content: string) => void;
+  /** Called when the delete button is clicked. */
+  onDelete?: () => void;
 }
 
 /**
@@ -35,6 +37,7 @@ function Sticker({
   onDoubleClick,
   onMouseDown,
   onContentChange,
+  onDelete,
 }: StickerProps) {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
@@ -77,6 +80,19 @@ function Sticker({
       onDoubleClick={onDoubleClick}
       onMouseDown={onMouseDown}
     >
+      {isSelected && !isEditing && onDelete && (
+        <button
+          type="button"
+          className="absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-gray-700 text-xs text-white opacity-60 hover:opacity-100"
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete();
+          }}
+          aria-label="Delete sticker"
+        >
+          &times;
+        </button>
+      )}
       {isEditing ? (
         <textarea
           ref={handleTextareaRef}
