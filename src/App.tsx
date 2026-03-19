@@ -45,6 +45,9 @@ function App() {
   useZoom(canvasRef, viewport, setViewport);
 
   const handleCanvasClick = useCallback(() => {
+    if (document.activeElement instanceof HTMLTextAreaElement) {
+      document.activeElement.blur();
+    }
     setEditingStickerId(null);
     setSelectedStickerId(null);
   }, []);
