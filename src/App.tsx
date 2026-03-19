@@ -2,6 +2,7 @@ import type { MouseEvent } from "react";
 import { useCallback, useRef, useState } from "react";
 import Canvas from "./components/Canvas";
 import Sticker from "./components/Sticker";
+import Toolbar from "./components/Toolbar";
 import type { Sticker as StickerType } from "./types";
 import { useBoard } from "./hooks/useBoard";
 import { usePan } from "./hooks/usePan";
@@ -12,8 +13,14 @@ const DEFAULT_HEIGHT = 150;
 const DEFAULT_COLOR = "#fef08a";
 
 function App() {
-  const { stickers, viewport, addSticker, setViewport, updateSticker } =
-    useBoard();
+  const {
+    stickers,
+    viewport,
+    addSticker,
+    setViewport,
+    updateSticker,
+    clearAll,
+  } = useBoard();
   const canvasRef = useRef<HTMLDivElement>(null);
   const [selectedStickerId, setSelectedStickerId] = useState<string | null>(
     null,
@@ -54,35 +61,38 @@ function App() {
   );
 
   return (
-    <Canvas
-      ref={canvasRef}
-      viewport={viewport}
-      onClick={handleCanvasClick}
-      onDoubleClick={handleCanvasDoubleClick}
-      onMouseDown={handlePanMouseDown}
-    >
-      {stickers.map((sticker) => (
-        <Sticker
-          key={sticker.id}
-          sticker={sticker}
-          isSelected={sticker.id === selectedStickerId}
-          isEditing={sticker.id === editingStickerId}
-          onClick={(e) => {
-            e.stopPropagation();
-            setSelectedStickerId(sticker.id);
-          }}
-          onDoubleClick={(e) => {
-            e.stopPropagation();
-            setSelectedStickerId(sticker.id);
-            setEditingStickerId(sticker.id);
-          }}
-          onContentChange={(content) => {
-            updateSticker(sticker.id, { content });
-            setEditingStickerId(null);
-          }}
-        />
-      ))}
-    </Canvas>
+    <>
+      <Canvas
+        ref={canvasRef}
+        viewport={viewport}
+        onClick={handleCanvasClick}
+        onDoubleClick={handleCanvasDoubleClick}
+        onMouseDown={handlePanMouseDown}
+      >
+        {stickers.map((sticker) => (
+          <Sticker
+            key={sticker.id}
+            sticker={sticker}
+            isSelected={sticker.id === selectedStickerId}
+            isEditing={sticker.id === editingStickerId}
+            onClick={(e) => {
+              e.stopPropagation();
+              setSelectedStickerId(sticker.id);
+            }}
+            onDoubleClick={(e) => {
+              e.stopPropagation();
+              setSelectedStickerId(sticker.id);
+              setEditingStickerId(sticker.id);
+            }}
+            onContentChange={(content) => {
+              updateSticker(sticker.id, { content });
+              setEditingStickerId(null);
+            }}
+          />
+        ))}
+      </Canvas>
+      <Toolbar onClear={clearAll} />
+    </>
   );
 }
 
