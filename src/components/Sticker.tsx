@@ -36,12 +36,10 @@ function Sticker({
   onMouseDown,
   onContentChange,
 }: StickerProps) {
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   const handleTextareaRef = useCallback((node: HTMLTextAreaElement | null) => {
-    (
-      textareaRef as React.MutableRefObject<HTMLTextAreaElement | null>
-    ).current = node;
+    textareaRef.current = node;
     if (node) {
       node.focus();
       node.setSelectionRange(node.value.length, node.value.length);
