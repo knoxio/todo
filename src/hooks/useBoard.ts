@@ -12,6 +12,8 @@ interface UseBoardReturn {
   removeSticker: (id: string) => void;
   setViewport: (v: Partial<BoardState["viewport"]>) => void;
   clearAll: () => void;
+  getBoard: () => BoardState;
+  setBoard: (board: BoardState) => void;
 }
 
 /**
@@ -77,6 +79,12 @@ export function useBoard(): UseBoardReturn {
     });
   }, []);
 
+  const getBoard = useCallback((): BoardState => state, [state]);
+
+  const setBoard = useCallback((board: BoardState) => {
+    setState(board);
+  }, []);
+
   return {
     stickers: state.stickers,
     viewport: state.viewport,
@@ -85,5 +93,7 @@ export function useBoard(): UseBoardReturn {
     removeSticker,
     setViewport,
     clearAll,
+    getBoard,
+    setBoard,
   };
 }
